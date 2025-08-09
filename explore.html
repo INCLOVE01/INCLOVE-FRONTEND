@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inclove | Discover</title>
+  <link rel="stylesheet" href="explore.css">
+</head>
+<body>
+  <!-- Background particles -->
+  <div class="bg-particles" id="particles"></div>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="logo">Inclove</div>
+    <ul class="nav-links">
+      <li><a href="#home">Home</a></li>
+      <li><a href="#profile">Profile</a></li>
+      <li><a href="#settings">Settings</a></li>
+      <li><a href="#signout">Sign Out</a></li>
+    </ul>
+  </nav>
+
+  <!-- Main container -->
+  <div class="container">
+    <!-- Profile Card -->
+    <div class="profile-card" id="profileCard">
+      <div class="image-container">
+        <img src="https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="User Photo" class="profile-image" id="profileImage">
+        <div class="online-status"></div>
+        <div class="image-overlay">
+          <div class="profile-name" id="profileName">Emma</div>
+          <div class="profile-age">24</div>
+        </div>
+      </div>
+
+      <div class="profile-content">
+        <p class="profile-bio" id="profileBio">Adventure seeker who loves painting sunsets, hiking mountain trails, and having deep conversations over coffee. Always up for trying new cuisines! ✨</p>
+
+        <div class="interests">
+          <span class="interest-tag" style="--delay: 0s">🎨 Art</span>
+          <span class="interest-tag" style="--delay: 0.2s">🏔️ Hiking</span>
+          <span class="interest-tag" style="--delay: 0.4s">☕ Coffee</span>
+          <span class="interest-tag" style="--delay: 0.6s">📸 Photography</span>
+          <span class="interest-tag" style="--delay: 0.8s">🌅 Travel</span>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+          <button class="action-btn dislike-btn" id="dislikeBtn">✕</button>
+          <button class="action-btn message-btn" id="messageBtn">💬</button>
+          <button class="action-btn like-btn" id="likeBtn">♥</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="explore.js"></script>
+</body>
+</html>
