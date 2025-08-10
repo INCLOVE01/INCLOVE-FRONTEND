@@ -6,17 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inclove - Inclusive Love</title>
   <link rel="stylesheet" href="style.css">
+  <script
+    src="https://www.paypal.com/sdk/js?client-id=BAA7Yp5GjKcNJI5JT4RCzAjzx3JSUt0_ySJPpKsCxYsrCXQgECwn3mhfP5MzIfsKOQhCVZTFCCl3BsJP2E&components=hosted-buttons&disable-funding=venmo&currency=USD">
+    </script>
 </head>
 
 <body>
 
   <!-- Hearts Background -->
-  <div class="hearts-container"></div>
+  <div class="hearts-container" id="heartsContainer"></div>
 
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="nav-left">
-      <!-- Replace "your-logo.png" with the actual path to your logo file -->
       <img src="logo.png" alt="Inclove Logo" class="logo">
     </div>
     <div class="nav-right">
@@ -36,10 +38,10 @@
       <h2>Are you a <span class="highlight">differently-abled</span> person?</h2>
       <div class="btn-group">
         <a href="abled.html">
-          <button>Yes, I am </button>
+          <button>Yes, I am</button>
         </a>
         <a href="intrested.html">
-          <button>No, but I'd love to connect with someone who is </button>
+          <button>No, but I'd love to connect with someone who is</button>
         </a>
       </div>
     </div>
@@ -48,7 +50,23 @@
   </main>
 
   <!-- Donation Floating Button -->
-  <a class="donate-btn" href="#">❤️ Donate</a>
+  <a class="donate-btn" href="#" id="donateBtn">❤️ Donate</a>
+
+  <!-- Donation Modal -->
+  <div class="modal-overlay" id="donationModal">
+    <div class="modal-content">
+      <button class="close-btn" id="closeModal">&times;</button>
+      <h2 class="modal-header">Support Inclove 💝</h2>
+      <p class="modal-message">
+        Your generous donation helps us create a more inclusive world where everyone can find love and meaningful
+        connections.
+      </p>
+      <div class="commitment-text">
+        🤝 We donate 10% of all contributions directly to disability support organizations and communities.
+      </div>
+      <div id="paypal-container-FGDE63LJ4YF4N"></div>
+    </div>
+  </div>
 
   <!-- Footer -->
   <footer>
@@ -60,6 +78,8 @@
     </div>
     <p class="footer-note">© 2025 Inclove – Made with empathy and heart.</p>
   </footer>
+  <script src="style.js"></script>
+
 
 
 </body>
