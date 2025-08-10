@@ -55,6 +55,33 @@
     </div>
   </div>
 
+  <script type="module">
+    import { auth } from './js/firebase-init.js';
+    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
+
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        window.location.href = 'sign up.html';
+      } else {
+        const nameEl = document.getElementById('profileName');
+        if (nameEl && user.displayName) nameEl.textContent = user.displayName;
+      }
+    });
+
+    // Sign out handler
+    const signOutLink = document.querySelector('a[href="#signout"]');
+    if (signOutLink) {
+      signOutLink.addEventListener('click', async (e) => {
+        e.preventDefault();
+        try {
+          await signOut(auth);
+          window.location.href = 'index.html';
+        } catch (err) {
+          alert(err?.message || 'Failed to sign out.');
+        }
+      });
+    }
+  </script>
   <script src="explore.js"></script>
 </body>
 </html>
