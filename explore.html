@@ -56,16 +56,36 @@
   </div>
 
   <script type="module">
-    import { auth } from './js/firebase-init.js';
+    import { auth, db } from './js/firebase-init.js';
     import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
+    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
 
-    onAuthStateChanged(auth, (user) => {
+    async function guardAndInit(user) {
       if (!user) {
         window.location.href = 'sign up.html';
-      } else {
+        return;
+      }
+      try {
+        const userRef = doc(db, 'users', user.uid);
+        const snap = await getDoc(userRef);
+        if (!snap.exists()) {
+          // No profile stored; sign out and redirect to sign up to enforce flow
+          try { await signOut(auth); } catch (_) {}
+          window.location.href = 'sign up.html';
+          return;
+        }
+        // Optionally update UI with display name
         const nameEl = document.getElementById('profileName');
         if (nameEl && user.displayName) nameEl.textContent = user.displayName;
+      } catch (e) {
+        alert('Unable to verify your profile. Please sign in again.');
+        try { await signOut(auth); } catch (_) {}
+        window.location.href = 'sign up.html';
       }
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      guardAndInit(user);
     });
 
     // Sign out handler
