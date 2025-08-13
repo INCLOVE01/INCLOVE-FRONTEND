@@ -1,107 +1,165 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Inclove | Discover</title>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
   <link rel="stylesheet" href="explore.css">
+
 </head>
+
 <body>
-  <!-- Background particles -->
-  <div class="bg-particles" id="particles"></div>
+  <div id="app">
+    <!-- Navigation -->
+    <nav class="navbar">
+      <a href="index.html"><div class="logo" role="banner">Inclove</div></a>
+      <ul class="nav-links" role="navigation">
+        <a href="explore.html"><li><button @click="navigateTo('home')" aria-label="Go to home page">Home</button></li></a>
+        <a href="profile.html"><li><button @click="navigateTo('profile')" aria-label="Go to profile page">Profile</button></li></a>
+        <a href="settings.html"><li><button @click="navigateTo('settings')" aria-label="Go to settings page">Settings</button></li></a>
+        <a href="index.html"><li><button @click="signOut" aria-label="Sign out of application">Sign Out</button></li></a>
+      </ul>
+    </nav>
 
-  <!-- Navigation -->
-  <nav class="navbar">
-    <div class="logo">Inclove</div>
-    <ul class="nav-links">
-      <li><a href="#home">Home</a></li>
-      <li><a href="#profile">Profile</a></li>
-      <li><a href="#settings">Settings</a></li>
-      <li><a href="#signout">Sign Out</a></li>
-    </ul>
-  </nav>
+    <!-- Main container -->
+    <div class="container">
+      <!-- Profile Card -->
+      <div class="profile-card"
+        :class="{ 'zoom-in': zoomLevel > 100, 'zoom-out': zoomLevel < 100, [cardTransition]: cardTransition }"
+        id="profileCard" role="main" :aria-label="`Profile of ${currentProfile.name}, age ${currentProfile.age}`">
 
-  <!-- Main container -->
-  <div class="container">
-    <!-- Profile Card -->
-    <div class="profile-card" id="profileCard">
-      <div class="image-container">
-        <img src="https://images.unsplash.com/photo-1544717297-fa95b6ee9643?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80" alt="User Photo" class="profile-image" id="profileImage">
-        <div class="online-status"></div>
-        <div class="image-overlay">
-          <div class="profile-name" id="profileName">Emma</div>
-          <div class="profile-age">24</div>
-        </div>
-      </div>
-
-      <div class="profile-content">
-        <p class="profile-bio" id="profileBio">Adventure seeker who loves painting sunsets, hiking mountain trails, and having deep conversations over coffee. Always up for trying new cuisines! ✨</p>
-
-        <div class="interests">
-          <span class="interest-tag" style="--delay: 0s">🎨 Art</span>
-          <span class="interest-tag" style="--delay: 0.2s">🏔️ Hiking</span>
-          <span class="interest-tag" style="--delay: 0.4s">☕ Coffee</span>
-          <span class="interest-tag" style="--delay: 0.6s">📸 Photography</span>
-          <span class="interest-tag" style="--delay: 0.8s">🌅 Travel</span>
+        <div class="image-container">
+          <img :src="currentProfile.image" :alt="`Photo of ${currentProfile.name}`" class="profile-image">
+          <div class="image-overlay">
+            <div class="profile-name" id="profileName" role="heading" aria-level="1">
+              {{ currentProfile.name }}
+            </div>
+            <div class="profile-age" :aria-label="`Age: ${currentProfile.age} years old`">
+              {{ currentProfile.age }}
+            </div>
+          </div>
         </div>
 
-        <!-- Action Buttons -->
-        <div class="action-buttons">
-          <button class="action-btn dislike-btn" id="dislikeBtn">✕</button>
-          <button class="action-btn message-btn" id="messageBtn">💬</button>
-          <button class="action-btn like-btn" id="likeBtn">♥</button>
+        <div class="profile-content">
+          <p class="profile-bio" :aria-label="`Biography: ${currentProfile.bio}`" role="region"
+            aria-labelledby="profileName">
+            {{ currentProfile.bio }}
+          </p>
+
+          <!-- Unique Crystal Rating System -->
+          <div class="rating-display" role="region" aria-label="User rating">
+            <div class="rating-label">Community Rating</div>
+            <div class="crystal-rating" :aria-label="`Rated ${currentProfile.rating} out of 5 crystals`">
+              <div v-for="i in 5" :key="i" class="crystal" :class="{ filled: i <= currentProfile.rating }"
+                :aria-hidden="true">
+              </div>
+            </div>
+            <div class="rating-text">{{ getRatingText(currentProfile.rating) }}</div>
+          </div>
+
+          <div class="interests" role="region" aria-label="Interests and hobbies">
+            <span class="sr-only">Interests:</span>
+            <span v-for="(interest, index) in currentProfile.interests" :key="index" class="interest-tag"
+              :aria-label="`Interest: ${interest}`">
+              {{ interest }}
+            </span>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="action-buttons" role="group" aria-label="Profile actions">
+            <button class="action-btn dislike-btn" @click="dislikeProfile"
+              :aria-label="`Not interested in ${currentProfile.name}`" :disabled="isTransitioning">
+              ✕
+            </button>
+            <button class="action-btn message-btn" @click="messageProfile"
+              :aria-label="`Send message to ${currentProfile.name}`">
+              💬
+            </button>
+            <button class="action-btn like-btn" @click="likeProfile"
+              :aria-label="`Interested in ${currentProfile.name}`" :disabled="isTransitioning">
+              ♥
+            </button>
+          </div>
         </div>
       </div>
     </div>
+
+    <!-- Accessibility Panel -->
+    <div class="accessibility-panel">
+      <button class="accessibility-toggle" @click="toggleAccessibilityMenu"
+        :aria-label="accessibilityMenuOpen ? 'Close accessibility options' : 'Open accessibility options'"
+        aria-expanded="false" aria-controls="accessibility-menu">
+        ♿
+      </button>
+
+      <div class="accessibility-menu" :class="{ hidden: !accessibilityMenuOpen }" id="accessibility-menu" role="dialog"
+        aria-labelledby="menu-title">
+
+        <h3 class="menu-title" id="menu-title">Accessibility Options</h3>
+
+        <!-- Screen Reader -->
+        <div class="menu-option">
+          <label class="option-label" for="screen-reader-toggle">Screen Reader</label>
+          <div class="toggle-switch" :class="{ active: screenReaderEnabled }" @click="toggleScreenReader" role="switch"
+            :aria-checked="screenReaderEnabled" tabindex="0" @keydown.space.prevent="toggleScreenReader"
+            @keydown.enter.prevent="toggleScreenReader">
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+
+        <!-- Zoom Controls -->
+        <div class="menu-option">
+          <span class="option-label">Zoom Level</span>
+          <div class="zoom-controls">
+            <button class="zoom-btn" @click="zoomOut" :disabled="zoomLevel <= 50" aria-label="Zoom out">−</button>
+            <span class="zoom-level" aria-live="polite">{{ zoomLevel }}%</span>
+            <button class="zoom-btn" @click="zoomIn" :disabled="zoomLevel >= 200" aria-label="Zoom in">+</button>
+          </div>
+        </div>
+
+        <!-- High Contrast -->
+        <div class="menu-option">
+          <label class="option-label">High Contrast</label>
+          <div class="toggle-switch" :class="{ active: highContrastEnabled }" @click="toggleHighContrast" role="switch"
+            :aria-checked="highContrastEnabled" tabindex="0" @keydown.space.prevent="toggleHighContrast"
+            @keydown.enter.prevent="toggleHighContrast">
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+
+        <!-- Colorblind Friendly -->
+        <div class="menu-option">
+          <label class="option-label">Colorblind Friendly</label>
+          <div class="toggle-switch" :class="{ active: colorblindFriendlyEnabled }" @click="toggleColorblindFriendly"
+            role="switch" :aria-checked="colorblindFriendlyEnabled" tabindex="0"
+            @keydown.space.prevent="toggleColorblindFriendly" @keydown.enter.prevent="toggleColorblindFriendly">
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+
+        <!-- Voice Commands -->
+        <div class="menu-option">
+          <label class="option-label">Voice Commands</label>
+          <div class="toggle-switch" :class="{ active: voiceCommandsEnabled }" @click="toggleVoiceCommands"
+            role="switch" :aria-checked="voiceCommandsEnabled" tabindex="0" @keydown.space.prevent="toggleVoiceCommands"
+            @keydown.enter.prevent="toggleVoiceCommands">
+            <div class="toggle-slider"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Voice Command Indicator -->
+    <div class="voice-indicator" :class="{ hidden: !isListening }" role="dialog" aria-live="polite">
+      <div class="voice-animation"></div>
+      <p>{{ voiceStatus }}</p>
+      <small>Say "like" or "pass" to make your choice</small>
+    </div>
   </div>
 
-  <script type="module">
-    import { auth, db } from './js/firebase-init.js';
-    import { onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js';
-    import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js';
-
-    async function guardAndInit(user) {
-      if (!user) {
-        window.location.href = 'sign up.html';
-        return;
-      }
-      try {
-        const userRef = doc(db, 'users', user.uid);
-        const snap = await getDoc(userRef);
-        if (!snap.exists()) {
-          // No profile stored; sign out and redirect to sign up to enforce flow
-          try { await signOut(auth); } catch (_) {}
-          window.location.href = 'sign up.html';
-          return;
-        }
-        // Optionally update UI with display name
-        const nameEl = document.getElementById('profileName');
-        if (nameEl && user.displayName) nameEl.textContent = user.displayName;
-      } catch (e) {
-        alert('Unable to verify your profile. Please sign in again.');
-        try { await signOut(auth); } catch (_) {}
-        window.location.href = 'sign up.html';
-      }
-    }
-
-    onAuthStateChanged(auth, (user) => {
-      guardAndInit(user);
-    });
-
-    // Sign out handler
-    const signOutLink = document.querySelector('a[href="#signout"]');
-    if (signOutLink) {
-      signOutLink.addEventListener('click', async (e) => {
-        e.preventDefault();
-        try {
-          await signOut(auth);
-          window.location.href = 'index.html';
-        } catch (err) {
-          alert(err?.message || 'Failed to sign out.');
-        }
-      });
-    }
-  </script>
   <script src="explore.js"></script>
 </body>
+
 </html>
