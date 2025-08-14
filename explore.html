@@ -14,12 +14,22 @@
   <div id="app">
     <!-- Navigation -->
     <nav class="navbar">
-      <a href="index.html"><div class="logo" role="banner">Inclove</div></a>
+      <a href="index.html">
+        <div class="logo" role="banner">Inclove</div>
+      </a>
       <ul class="nav-links" role="navigation">
-        <a href="explore.html"><li><button @click="navigateTo('home')" aria-label="Go to home page">Home</button></li></a>
-        <a href="profile.html"><li><button @click="navigateTo('profile')" aria-label="Go to profile page">Profile</button></li></a>
-        <a href="settings.html"><li><button @click="navigateTo('settings')" aria-label="Go to settings page">Settings</button></li></a>
-        <a href="index.html"><li><button @click="signOut" aria-label="Sign out of application">Sign Out</button></li></a>
+        <a href="explore.html">
+          <li><button @click="navigateTo('home')" aria-label="Go to home page">Home</button></li>
+        </a>
+        <a href="profile.html">
+          <li><button @click="navigateTo('profile')" aria-label="Go to profile page">Profile</button></li>
+        </a>
+        <a href="setting.html">
+          <li><button @click="navigateTo('settings')" aria-label="Go to settings page">Settings</button></li>
+        </a>
+        <a href="index.html">
+          <li><button @click="signOut" aria-label="Sign out of application">Sign Out</button></li>
+        </a>
       </ul>
     </nav>
 
@@ -73,10 +83,12 @@
               :aria-label="`Not interested in ${currentProfile.name}`" :disabled="isTransitioning">
               ✕
             </button>
-            <button class="action-btn message-btn" @click="messageProfile"
-              :aria-label="`Send message to ${currentProfile.name}`">
-              💬
-            </button>
+            <a href="message.html">
+              <button class="action-btn message-btn" @click="messageProfile"
+                :aria-label="`Send message to ${currentProfile.name}`">
+                💬
+              </button>
+            </a>
             <button class="action-btn like-btn" @click="likeProfile"
               :aria-label="`Interested in ${currentProfile.name}`" :disabled="isTransitioning">
               ♥
